@@ -22,3 +22,6 @@ redis-data/
 
 # Тесты
 coverage/
+
+# TS build info
+*.tsbuildinfo
