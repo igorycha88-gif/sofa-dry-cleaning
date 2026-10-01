@@ -1,7 +1,7 @@
 # Скилл AI-DevOps: Продакшн-деплой (VPS)
 
 > ⚠️ **СТАТУС: НЕ АКТИВЕН.** VPS и домен появятся позже.
-> Когда появятся — заполнить плейсхолдеры `<VPS_IP>`, `<DOMAIN>`, `<OWNER>`
+> Когда появятся — заполнить плейсхолдеры `<VPS_IP>`, `<DOMAIN>`
 > в `PROD_CONFIG` (файл `PIPELINE_PROD.js`) и в этом скилле.
 > Конвейер прода активируется автоматически.
 
@@ -43,7 +43,7 @@
 │  └──────────┘    └──────────────┘                │
 │                                                  │
 │  Host: network_mode=host (все сервисы)           │
-│  /root/himchistka-divanov/  ← app directory      │
+│  /root/sofa-dry-cleaning/  ← app directory      │
 │  /var/www/uploads/          ← uploads volume     │
 └──────────────────────────────────────────────────┘
 ```
@@ -124,9 +124,9 @@ Entrypoint: `docker/entrypoint.sh` (prisma migrate + npm start)
 ### Registry: GHCR
 
 ```
-ghcr.io/<OWNER>/himchistka-divanov/app:sha-XXXXXXX
-ghcr.io/<OWNER>/himchistka-divanov/app:latest
-ghcr.io/<OWNER>/himchistka-divanov/app:YYYYMMDD
+ghcr.io/igorycha88-gif/sofa-dry-cleaning/app:sha-XXXXXXX
+ghcr.io/igorycha88-gif/sofa-dry-cleaning/app:latest
+ghcr.io/igorycha88-gif/sofa-dry-cleaning/app:YYYYMMDD
 ```
 
 ---
@@ -248,7 +248,7 @@ ssh -o ConnectTimeout=10 root@<VPS_IP> "echo OK"
 ssh root@<VPS_IP> "df -m /root | tail -1 | awk '{print \$4}'"
 
 # Проверка .env
-ssh root@<VPS_IP> "test -f /root/himchistka-divanov/.env && echo OK"
+ssh root@<VPS_IP> "test -f /root/sofa-dry-cleaning/.env && echo OK"
 
 # Текущее состояние
 ssh root@<VPS_IP> "docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}' | grep cleaning"
@@ -258,10 +258,10 @@ ssh root@<VPS_IP> "docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}
 
 ```bash
 # Бэкап БД
-ssh root@<VPS_IP> "pg_dump -U postgres -h 127.0.0.1 cleaning | gzip > /root/himchistka-divanov/backups/db_\$(date +%Y%m%d_%H%M%S).sql.gz"
+ssh root@<VPS_IP> "pg_dump -U postgres -h 127.0.0.1 cleaning | gzip > /root/sofa-dry-cleaning/backups/db_\$(date +%Y%m%d_%H%M%S).sql.gz"
 
 # Бэкап nginx конфига
-ssh root@<VPS_IP> "cp /etc/nginx/conf.d/cleaning-upstream.conf /root/himchistka-divanov/backups/nginx-upstream-\$(date +%Y%m%d_%H%M%S).conf"
+ssh root@<VPS_IP> "cp /etc/nginx/conf.d/cleaning-upstream.conf /root/sofa-dry-cleaning/backups/nginx-upstream-\$(date +%Y%m%d_%H%M%S).conf"
 ```
 
 ### Build / Pull
@@ -275,7 +275,7 @@ gh run list --branch main --limit 1
 gh run watch <run_id>
 
 # Pull образа на VPS
-ssh root@<VPS_IP> "docker pull ghcr.io/<OWNER>/himchistka-divanov/app:sha-XXXXXXX"
+ssh root@<VPS_IP> "docker pull ghcr.io/igorycha88-gif/sofa-dry-cleaning/app:sha-XXXXXXX"
 ```
 
 ### Deploy (Blue-Green)
@@ -286,11 +286,11 @@ ssh root@<VPS_IP> 'docker run -d \
   --name cleaning-app-green \
   --network host \
   --restart no \
-  --env-file /root/himchistka-divanov/.env \
+  --env-file /root/sofa-dry-cleaning/.env \
   -e PORT=3003 \
   -e NODE_ENV=production \
   -v /var/www/uploads:/app/public/uploads \
-  ghcr.io/<OWNER>/himchistka-divanov/app:sha-XXXXXXX'
+  ghcr.io/igorycha88-gif/sofa-dry-cleaning/app:sha-XXXXXXX'
 
 # Healthcheck GREEN (wait up to 120s)
 ssh root@<VPS_IP> 'for i in $(seq 1 24); do
@@ -319,11 +319,11 @@ ssh root@<VPS_IP> 'docker run -d \
   --name cleaning-app \
   --network host \
   --restart unless-stopped \
-  --env-file /root/himchistka-divanov/.env \
+  --env-file /root/sofa-dry-cleaning/.env \
   -e PORT=3001 \
   -e NODE_ENV=production \
   -v /var/www/uploads:/app/public/uploads \
-  ghcr.io/<OWNER>/himchistka-divanov/app:sha-XXXXXXX'
+  ghcr.io/igorycha88-gif/sofa-dry-cleaning/app:sha-XXXXXXX'
 
 # Переключение nginx на 3001
 ssh root@<VPS_IP> 'cat > /etc/nginx/conf.d/cleaning-upstream.conf <<EOF
@@ -355,13 +355,13 @@ ssh root@<VPS_IP> 'docker rm -f cleaning-app-green 2>/dev/null'
 
 # Если BLUE не работает — запустить предыдущий образ
 ssh root@<VPS_IP> "docker run -d --name cleaning-app --network host --restart unless-stopped \
-  --env-file /root/himchistka-divanov/.env \
+  --env-file /root/sofa-dry-cleaning/.env \
   -e PORT=3001 -e NODE_ENV=production \
   -v /var/www/uploads:/app/public/uploads \
   <PREVIOUS_IMAGE>"
 
 # Восстановление БД (ТОЛЬКО при подтверждении пользователя)
-# gunzip -c /root/himchistka-divanov/backups/db_YYYYMMDD.sql.gz | psql -U postgres cleaning
+# gunzip -c /root/sofa-dry-cleaning/backups/db_YYYYMMDD.sql.gz | psql -U postgres cleaning
 ```
 
 ### Verification
@@ -390,10 +390,10 @@ ssh root@<VPS_IP> "docker logs cleaning-app --tail=50 2>&1 | grep -iE 'error|fat
 
 ```bash
 # Удалить старые образы (оставить 10)
-ssh root@<VPS_IP> 'docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "ghcr.io.*himchistka.*app" | grep -v "<none>" | tail -n +11 | xargs -r docker rmi'
+ssh root@<VPS_IP> 'docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "ghcr.io.*sofa-dry-cleaning.*app" | grep -v "<none>" | tail -n +11 | xargs -r docker rmi'
 
 # Удалить старые бэкапы (> 7 дней)
-ssh root@<VPS_IP> 'find /root/himchistka-divanov/backups -name "*.sql.gz" -mtime +7 -delete'
+ssh root@<VPS_IP> 'find /root/sofa-dry-cleaning/backups -name "*.sql.gz" -mtime +7 -delete'
 
 # Удалить старые логи (> 30 дней)
 ssh root@<VPS_IP> 'find /var/log/cleaning-deploy -name "*.log" -mtime +30 -delete'
@@ -408,7 +408,7 @@ ssh root@<VPS_IP> 'docker image prune -f'
 
 ```bash
 # Source env for credentials
-source /root/himchistka-divanov/.env
+source /root/sofa-dry-cleaning/.env
 
 # Success
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \

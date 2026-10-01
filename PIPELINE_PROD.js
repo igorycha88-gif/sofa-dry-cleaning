@@ -34,10 +34,10 @@
 const PROD_CONFIG = {
   VPS_HOST: "<VPS_IP>",          // TODO: IP VPS-сервера, например 37.x.x.x
   PROD_DOMAIN: "<DOMAIN>",       // TODO: домен сайта, например himchistka-divanov.ru
-  GHCR_OWNER: "<OWNER>",         // TODO: владелец репозитория на GitHub (для GHCR)
-  REPO_NAME: "himchistka-divanov",
+  GHCR_OWNER: "igorycha88-gif",  // владелец репозитория на GitHub (для GHCR)
+  REPO_NAME: "sofa-dry-cleaning",
   BRANCH: "main",                // основная ветка разработки
-  APP_DIR: "/root/himchistka-divanov",  // каталог проекта на VPS
+  APP_DIR: "/root/sofa-dry-cleaning",     // каталог проекта на VPS
   APP_CONTAINER: "cleaning-app",
   GREEN_CONTAINER: "cleaning-app-green",
   BLUE_PORT: 3001,               // production порт
