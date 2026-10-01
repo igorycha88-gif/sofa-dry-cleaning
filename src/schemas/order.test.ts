@@ -3,7 +3,7 @@ import { parseOrderInput, ValidationError, orderCreateSchema } from '@/schemas/o
 const validInput = {
   name: 'Иван',
   phone: '+7 (999) 123-45-67',
-  furnitureType: 'SOFA',
+  furnitureType: 'SOFA_2',
 };
 
 describe('orderCreateSchema', () => {
@@ -33,20 +33,26 @@ describe('orderCreateSchema', () => {
     expect(orderCreateSchema.safeParse({ ...validInput, email: '' }).success).toBe(true);
   });
 
-  test('furnitureType: только известные значения', () => {
+  test('furnitureType: только диванные типы', () => {
+    expect(orderCreateSchema.safeParse({ ...validInput, furnitureType: 'ARMCHAIR' }).success).toBe(false);
+    expect(orderCreateSchema.safeParse({ ...validInput, furnitureType: 'MATTRESS' }).success).toBe(false);
     expect(orderCreateSchema.safeParse({ ...validInput, furnitureType: 'TABLE' }).success).toBe(false);
+    expect(orderCreateSchema.safeParse({ ...validInput, furnitureType: 'SOFA_3' }).success).toBe(true);
+    expect(orderCreateSchema.safeParse({ ...validInput, furnitureType: 'U_SHAPE_SOFA' }).success).toBe(true);
   });
 
-  test('seats: целое 1..40 (строка коэрцируется)', () => {
+  test('seats: целое 1..5 (строка коэрцируется)', () => {
     expect(orderCreateSchema.safeParse({ ...validInput, seats: '3' }).success).toBe(true);
     expect(orderCreateSchema.safeParse({ ...validInput, seats: 0 }).success).toBe(false);
+    expect(orderCreateSchema.safeParse({ ...validInput, seats: 6 }).success).toBe(false);
     expect(orderCreateSchema.safeParse({ ...validInput, seats: 2.5 }).success).toBe(false);
   });
 
   test('services: только известные id', () => {
     expect(
-      orderCreateSchema.safeParse({ ...validInput, services: ['antibacterial'] }).success
+      orderCreateSchema.safeParse({ ...validInput, services: ['fabric_boucle'] }).success
     ).toBe(true);
+    expect(orderCreateSchema.safeParse({ ...validInput, services: ['antibacterial'] }).success).toBe(false);
     expect(orderCreateSchema.safeParse({ ...validInput, services: ['gold'] }).success).toBe(false);
   });
 

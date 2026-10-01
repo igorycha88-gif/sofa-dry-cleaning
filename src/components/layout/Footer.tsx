@@ -48,9 +48,44 @@ export function Footer() {
                 {siteConfig.phone}
               </a>
             </li>
-            <li className="text-slate-400">{siteConfig.email}</li>
+            <li>
+              <a href={siteConfig.phone2Href} className="text-lg font-bold text-white transition-colors hover:text-violet-300">
+                {siteConfig.phone2}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${siteConfig.email}`} className="text-slate-400 transition-colors hover:text-white">
+                {siteConfig.email}
+              </a>
+            </li>
             <li className="text-slate-400">{siteConfig.workingHours}</li>
             <li className="text-slate-400">{siteConfig.address}</li>
+            <li className="flex flex-wrap gap-3 pt-1">
+              <a
+                href={siteConfig.messengerLinks.telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-white/20 px-3 py-1 text-xs text-slate-300 transition-colors hover:border-violet-400 hover:text-white"
+              >
+                Telegram
+              </a>
+              <a
+                href={siteConfig.messengerLinks.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-white/20 px-3 py-1 text-xs text-slate-300 transition-colors hover:border-violet-400 hover:text-white"
+              >
+                WhatsApp
+              </a>
+              <a
+                href={siteConfig.messengerLinks.max}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-white/20 px-3 py-1 text-xs text-slate-300 transition-colors hover:border-violet-400 hover:text-white"
+              >
+                MAX
+              </a>
+            </li>
           </ul>
         </div>
       </div>

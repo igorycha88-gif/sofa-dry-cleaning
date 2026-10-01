@@ -24,7 +24,7 @@ function makeRequest(body: unknown): Request {
 }
 
 describe('POST /api/v1/orders', () => {
-  const validBody = { name: 'Иван', phone: '+79991234567', furnitureType: 'SOFA' };
+  const validBody = { name: 'Иван', phone: '+79991234567', furnitureType: 'SOFA_2' };
 
   beforeEach(() => {
     mockedCreateOrder.mockReset();

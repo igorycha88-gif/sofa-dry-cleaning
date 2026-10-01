@@ -2,23 +2,19 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { SERVICE_PAGES } from '@/config/site';
-import { FURNITURE_PRICING, priceFrom, type FurnitureTypeKey } from '@/config/pricing';
+import { FURNITURE_PRICING, priceFrom, type SofaTypeKey } from '@/config/pricing';
 import { ButtonLink } from '@/components/ui/Button';
 
 export const metadata: Metadata = {
-  title: 'Услуги химчистки — диваны, матрасы, ковры',
+  title: 'Услуги химчистки диванов — на дому',
   description:
-    'Химчистка диванов, угловых диванов, кресел, матрасов, ковров и стульев на дому. Цены от 350 ₽/м². Выезд в день заказа.',
+    'Химчистка диванов на дому в Москве и МО: прямые от 1 700 ₽, угловые от 2 600 ₽, П-образные от 4 300 ₽. Выезд в день заказа, без предоплаты.',
   alternates: { canonical: '/uslugi' },
 };
 
-const SLUG_TO_TYPE: Record<string, FurnitureTypeKey> = {
-  divan: 'SOFA',
+const SLUG_TO_TYPE: Record<string, SofaTypeKey> = {
+  divan: 'SOFA_2',
   'uglovoy-divan': 'CORNER_SOFA',
-  kreslo: 'ARMCHAIR',
-  matras: 'MATTRESS',
-  kovry: 'CARPET',
-  stulya: 'CHAIR',
 };
 
 export default function ServicesPage() {
@@ -28,15 +24,15 @@ export default function ServicesPage() {
         eyebrow="Наши услуги"
         title={
           <>
-            Химчистка <span className="text-gradient">любой мягкой мебели</span>
+            Химчистка <span className="text-gradient">диванов</span>
           </>
         }
-        subtitle="Профессиональное оборудование и сертифицированные средства для каждого типа обивки."
+        subtitle="Прямые, угловые и П-образные диваны. Профессиональное оборудование и сертифицированные средства для каждого типа обивки."
       />
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {SERVICE_PAGES.map((service) => {
-          const furnitureKey = SLUG_TO_TYPE[service.slug] ?? 'OTHER';
+          const furnitureKey = SLUG_TO_TYPE[service.slug] ?? 'SOFA_2';
           const pricing = FURNITURE_PRICING[furnitureKey];
           return (
             <Link
@@ -60,7 +56,7 @@ export default function ServicesPage() {
                 </span>
               </div>
               <span className="mt-2 text-xs text-slate-400">
-                за 1 × {pricing.unit}: {pricing.pricePerUnit.toLocaleString('ru-RU')} ₽
+                за 1 диван: от {pricing.pricePerUnit.toLocaleString('ru-RU')} ₽
               </span>
             </Link>
           );

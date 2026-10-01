@@ -53,7 +53,7 @@ export function Hero() {
             className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-slate-600"
           >
             Профессиональная чистка за 1–2 часа. Пятна, запахи и пыль уходят —
-            мебель сохнет 4–6 часов и радует как новая.
+            диван сохнет 4–6 часов и радует как новый.
           </motion.p>
 
           <motion.div
@@ -94,16 +94,16 @@ export function Hero() {
         {/* Плавающие карточки с ценами (декоративный тренд) */}
         <div aria-hidden className="pointer-events-none absolute inset-0 hidden lg:block">
           <div className="absolute top-1/4 left-8 glass rounded-2xl px-5 py-4 shadow-bento motion-safe:animate-float">
-            <div className="text-xs text-slate-500">Диван 2 места</div>
-            <div className="font-heading text-lg font-bold text-gradient">от {priceFrom('SOFA').toLocaleString('ru-RU')} ₽</div>
+            <div className="text-xs text-slate-500">Диван 2-местный</div>
+            <div className="font-heading text-lg font-bold text-gradient">от {priceFrom('SOFA_2').toLocaleString('ru-RU')} ₽</div>
           </div>
           <div
             className="absolute top-1/3 right-8 glass rounded-2xl px-5 py-4 shadow-bento motion-safe:animate-float"
             style={{ animationDelay: '1.5s' }}
           >
-            <div className="text-xs text-slate-500">Матрас 2-сп</div>
+            <div className="text-xs text-slate-500">Угловой диван</div>
             <div className="font-heading text-lg font-bold text-gradient">
-              от {priceFrom('MATTRESS').toLocaleString('ru-RU')} ₽
+              от {priceFrom('CORNER_SOFA').toLocaleString('ru-RU')} ₽
             </div>
           </div>
         </div>

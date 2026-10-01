@@ -31,8 +31,8 @@ const mockedWarn = logger.warn as jest.Mock;
 const validPayload = {
   name: 'Иван',
   phone: '+7 (999) 123-45-67',
-  furnitureType: 'SOFA',
-  seats: 2,
+  furnitureType: 'SOFA_2',
+  seats: 1,
   services: ['heavy_soil'],
   source: 'calculator',
 };
@@ -45,7 +45,7 @@ beforeEach(() => {
     createdAt: new Date('2026-01-01T10:00:00Z'),
     ...validPayload,
     phone: '+79991234567',
-    calculatedPrice: 3750,
+    calculatedPrice: 2050,
   });
 });
 
@@ -59,9 +59,9 @@ describe('createOrder', () => {
     expect(mockedCreate.mock.calls[0][0].data).toMatchObject({
       name: 'Иван',
       phone: '+79991234567',
-      furnitureType: 'SOFA',
+      furnitureType: 'SOFA_2',
       services: ['heavy_soil'],
-      calculatedPrice: 3750,
+      calculatedPrice: 2050,
     });
     expect(mockedSendEmails).toHaveBeenCalledTimes(1);
 
@@ -102,7 +102,8 @@ describe('createOrder', () => {
 
   test('цена всегда пересчитывается на сервере', async () => {
     await createOrder({ ...validPayload, calculatedPrice: 100 }, '1.2.3.4');
-    expect(mockedCreate.mock.calls[0][0].data.calculatedPrice).toBe(3750);
+    // SOFA_2 ×1 + heavy_soil(×1.2): 1700×1.2=2040 → округление до 50 вверх → 2050
+    expect(mockedCreate.mock.calls[0][0].data.calculatedPrice).toBe(2050);
   });
 
   test('телефон в логах маскирован', async () => {

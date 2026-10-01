@@ -2,18 +2,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SERVICE_PAGES, siteConfig } from '@/config/site';
-import { FURNITURE_PRICING, EXTRA_SERVICES, calcPrice, type FurnitureTypeKey } from '@/config/pricing';
+import { FURNITURE_PRICING, EXTRA_SERVICES, FABRIC_SERVICE_IDS, calcPrice, type SofaTypeKey } from '@/config/pricing';
 import { FaqAccordion } from '@/components/home/FaqAccordion';
 import { OrderForm } from '@/components/forms/OrderForm';
 import { ButtonLink } from '@/components/ui/Button';
 
-const SLUG_TO_TYPE: Record<string, FurnitureTypeKey> = {
-  divan: 'SOFA',
+const SLUG_TO_TYPE: Record<string, SofaTypeKey> = {
+  divan: 'SOFA_2',
   'uglovoy-divan': 'CORNER_SOFA',
-  kreslo: 'ARMCHAIR',
-  matras: 'MATTRESS',
-  kovry: 'CARPET',
-  stulya: 'CHAIR',
 };
 
 interface PageProps {
@@ -38,9 +34,9 @@ export default function ServicePage({ params }: PageProps) {
   const service = SERVICE_PAGES.find((s) => s.slug === params.slug);
   if (!service) notFound();
 
-  const furnitureKey = SLUG_TO_TYPE[service.slug] ?? 'OTHER';
+  const furnitureKey = SLUG_TO_TYPE[service.slug] ?? 'SOFA_2';
   const pricing = FURNITURE_PRICING[furnitureKey];
-  const examplePrice = calcPrice({ furnitureType: furnitureKey, units: Math.min(3, pricing.maxUnits), services: [] });
+  const examplePrice = calcPrice({ furnitureType: furnitureKey, units: 1, services: [] });
 
   const serviceJsonLd = {
     '@context': 'https://schema.org',
@@ -52,8 +48,8 @@ export default function ServicePage({ params }: PageProps) {
     offers: {
       '@type': 'Offer',
       priceCurrency: 'RUB',
-      price: pricing.pricePerUnit * pricing.minUnits,
-      description: `от ${pricing.pricePerUnit * pricing.minUnits} ₽`,
+      price: pricing.pricePerUnit,
+      description: `от ${pricing.pricePerUnit.toLocaleString('ru-RU')} ₽`,
     },
   };
 
@@ -82,7 +78,7 @@ export default function ServicePage({ params }: PageProps) {
 
       <header className="max-w-3xl">
         <h1 className="font-heading text-3xl font-extrabold text-slate-950 sm:text-5xl">
-          {service.h1} — <span className="text-gradient">от {(pricing.pricePerUnit * pricing.minUnits).toLocaleString('ru-RU')} ₽</span>
+          {service.h1} — <span className="text-gradient">от {pricing.pricePerUnit.toLocaleString('ru-RU')} ₽</span>
         </h1>
         <p className="mt-4 text-lg leading-relaxed text-slate-600">{service.description}</p>
         <div className="mt-6 flex flex-wrap gap-4">
@@ -122,13 +118,14 @@ export default function ServicePage({ params }: PageProps) {
           <div className="glass mt-10 rounded-bento p-6 shadow-bento">
             <h3 className="font-heading text-base font-bold text-slate-900">Пример расчёта</h3>
             <p className="mt-2 text-sm text-slate-600">
-              {pricing.label}, {Math.min(3, pricing.maxUnits)} × {pricing.unit} —{' '}
+              {pricing.label} ({pricing.sizeHint}), 1 шт —{' '}
               <span className="font-heading text-lg font-bold text-gradient">
-                {examplePrice.toLocaleString('ru-RU')} ₽
+                от {examplePrice.toLocaleString('ru-RU')} ₽
               </span>
             </p>
             <p className="mt-1 text-xs text-slate-500">
-              Доп. услуги: {EXTRA_SERVICES.map((s) => s.label).join(', ')}.
+              Доп. услуги: {EXTRA_SERVICES.filter((s) => !FABRIC_SERVICE_IDS.includes(s.id)).map((s) => s.label).join(', ')}.
+              Наценки за обивку: велюр +30%, флок +40%, букле +50%.
             </p>
           </div>
         </section>

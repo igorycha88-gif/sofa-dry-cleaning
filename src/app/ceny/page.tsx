@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ButtonLink } from '@/components/ui/Button';
-import { FURNITURE_PRICING, EXTRA_SERVICES } from '@/config/pricing';
+import { FURNITURE_PRICING, PRICE_EXTRAS_TABLE } from '@/config/pricing';
 
 export const metadata: Metadata = {
-  title: 'Цены на химчистку — от 350 ₽/м²',
+  title: 'Цены на химчистку диванов — от 1 700 ₽',
   description:
-    'Актуальный прайс на химчистку диванов, кресел, матрасов, ковров и стульев. Прозрачные цены без доплат, скидки на объём.',
+    'Актуальный прайс на химчистку диванов на дому: 2-местный от 1 700 ₽, 3-местный от 2 100 ₽, угловой от 2 600 ₽, П-образный от 4 300 ₽. Без предоплат, цена фиксируется до начала работ.',
   alternates: { canonical: '/ceny' },
 };
 
-const ORDER = ['SOFA', 'CORNER_SOFA', 'ARMCHAIR', 'MATTRESS', 'CARPET', 'CHAIR', 'OTTOMAN'] as const;
+const ORDER = ['SOFA_2', 'SOFA_3', 'CORNER_SOFA', 'CORNER_SOFA_5', 'U_SHAPE_SOFA'] as const;
 
 export default function PricingPage() {
   return (
@@ -22,18 +22,17 @@ export default function PricingPage() {
             Цены — <span className="text-gradient">без сюрпризов</span>
           </>
         }
-        subtitle="Стоимость фиксируется до начала работ. Доплата на месте — исключена."
+        subtitle="Стоимость фиксируется до начала работ. Оплата — только по факту, после приёмки результата."
       />
 
       <div className="glass overflow-hidden rounded-bento shadow-bento">
         <table className="w-full text-left text-sm">
-          <caption className="sr-only">Прайс-лист на химчистку мебели</caption>
+          <caption className="sr-only">Прайс-лист на химчистку диванов</caption>
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50/80 text-xs uppercase tracking-wider text-slate-500">
-              <th scope="col" className="px-6 py-4">Услуга</th>
-              <th scope="col" className="px-6 py-4">Единица</th>
-              <th scope="col" className="px-6 py-4 text-right">Цена за единицу</th>
-              <th scope="col" className="hidden px-6 py-4 text-right sm:table-cell">Мин. заказ</th>
+              <th scope="col" className="px-6 py-4">Тип дивана</th>
+              <th scope="col" className="hidden px-6 py-4 sm:table-cell">Размер</th>
+              <th scope="col" className="px-6 py-4 text-right">Цена</th>
             </tr>
           </thead>
           <tbody>
@@ -42,12 +41,9 @@ export default function PricingPage() {
               return (
                 <tr key={key} className="border-b border-slate-100 last:border-0 hover:bg-violet-50/40">
                   <th scope="row" className="px-6 py-4 font-bold text-slate-900">{item.label}</th>
-                  <td className="px-6 py-4 text-slate-600">за {item.unit}</td>
+                  <td className="hidden px-6 py-4 text-slate-600 sm:table-cell">{item.sizeHint}</td>
                   <td className="px-6 py-4 text-right font-heading font-bold text-slate-900">
-                    {item.pricePerUnit.toLocaleString('ru-RU')} ₽
-                  </td>
-                  <td className="hidden px-6 py-4 text-right text-slate-600 sm:table-cell">
-                    от {(item.pricePerUnit * item.minUnits).toLocaleString('ru-RU')} ₽
+                    от {item.pricePerUnit.toLocaleString('ru-RU')} ₽
                   </td>
                 </tr>
               );
@@ -56,24 +52,36 @@ export default function PricingPage() {
         </table>
       </div>
 
-      <div className="mt-12 grid gap-5 sm:grid-cols-2">
-        {EXTRA_SERVICES.map((service) => (
-          <div key={service.id} className="glass flex items-start justify-between gap-4 rounded-bento p-5 shadow-bento">
-            <div>
-              <div className="text-sm font-bold text-slate-900">{service.label}</div>
-              <div className="mt-1 text-xs text-slate-500">{service.description}</div>
-            </div>
-            <div className="shrink-0 font-heading text-sm font-bold text-violet-700">
-              {service.priceMode === 'multiplier'
-                ? `+${Math.round((service.value - 1) * 100)}%`
-                : `+${service.value.toLocaleString('ru-RU')} ₽`}
-            </div>
-          </div>
-        ))}
+      <h2 className="mt-14 font-heading text-2xl font-bold text-slate-900">
+        Дополнительные работы и наценки
+      </h2>
+      <div className="glass mt-5 overflow-hidden rounded-bento shadow-bento">
+        <table className="w-full text-left text-sm">
+          <caption className="sr-only">Дополнительные работы и наценки</caption>
+          <thead>
+            <tr className="border-b border-slate-200 bg-slate-50/80 text-xs uppercase tracking-wider text-slate-500">
+              <th scope="col" className="px-6 py-4">Услуга</th>
+              <th scope="col" className="px-6 py-4 text-right">Цена</th>
+            </tr>
+          </thead>
+          <tbody>
+            {PRICE_EXTRAS_TABLE.map((item) => (
+              <tr key={item.label} className="border-b border-slate-100 last:border-0 hover:bg-violet-50/40">
+                <th scope="row" className="px-6 py-3.5 font-medium text-slate-800">{item.label}</th>
+                <td className="px-6 py-3.5 text-right font-heading font-bold text-slate-900">
+                  {item.price.startsWith('+') ? item.price : `от ${item.price}`}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+      <p className="mt-4 text-xs text-slate-500">
+        Цены указаны за изделие, текстиль стандартного типа. Выезд по Москве; стоимость выезда за МКАД уточняйте у менеджера.
+      </p>
 
       <div className="mt-16 text-center">
-        <p className="mb-5 text-slate-600">Хотите точную цену под вашу мебель?</p>
+        <p className="mb-5 text-slate-600">Хотите точную цену под ваш диван?</p>
         <ButtonLink href="/#calculator" size="lg">
           Рассчитать в калькуляторе
         </ButtonLink>

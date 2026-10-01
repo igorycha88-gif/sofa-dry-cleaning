@@ -25,11 +25,11 @@ const order: OrderEmailPayload = {
   name: 'Иван <Тест>',
   phone: '+79991234567',
   email: 'client@example.com',
-  furnitureType: 'SOFA',
-  seats: 2,
+  furnitureType: 'SOFA_2',
+  seats: 1,
   services: ['heavy_soil', 'odor_removal'],
   comment: '<script>alert(1)</script>',
-  calculatedPrice: 3750,
+  calculatedPrice: 2050,
 };
 
 describe('шаблоны писем', () => {
@@ -38,7 +38,7 @@ describe('шаблоны писем', () => {
     expect(html).toContain('+79991234567');
     expect(html).toContain('Иван &lt;Тест&gt;');
     expect(html).not.toContain('<script>alert(1)</script>');
-    expect(html).toMatch(/3[\s\u00A0]750/);
+    expect(html).toMatch(/2[\s\u00A0]050/);
   });
 
   test('письмо клиенту дружелюбное и содержит имя', () => {

@@ -1,7 +1,7 @@
 import { logger } from '@/lib/logger';
 import { prisma } from '@/lib/prisma';
 import { maskPhone } from '@/lib/utils';
-import { calcPrice, type ExtraServiceId, type FurnitureTypeKey } from '@/config/pricing';
+import { calcPrice, FURNITURE_PRICING, type ExtraServiceId, type SofaTypeKey } from '@/config/pricing';
 import {
   parseOrderInput,
   RateLimitError,
@@ -46,8 +46,8 @@ export async function createOrder(
 
   // Цена всегда считается на сервере (клиентскому calculatedPrice не доверяем)
   const serverPrice = calcPrice({
-    furnitureType: input.furnitureType as FurnitureTypeKey,
-    units: input.seats ?? defaultUnits(input.furnitureType as FurnitureTypeKey),
+    furnitureType: input.furnitureType as SofaTypeKey,
+    units: input.seats ?? defaultUnits(input.furnitureType as SofaTypeKey),
     services: input.services as ExtraServiceId[],
   });
 
@@ -118,14 +118,8 @@ export async function createOrder(
   return { id: order.id };
 }
 
-function defaultUnits(furnitureType: FurnitureTypeKey): number {
-  const defaults: Partial<Record<FurnitureTypeKey, number>> = {
-    SOFA: 2,
-    CORNER_SOFA: 4,
-    CARPET: 4,
-    MATTRESS: 2,
-  };
-  return defaults[furnitureType] ?? 1;
+function defaultUnits(furnitureType: SofaTypeKey): number {
+  return FURNITURE_PRICING[furnitureType]?.minUnits ?? 1;
 }
 
 export { RateLimitError, ValidationError };

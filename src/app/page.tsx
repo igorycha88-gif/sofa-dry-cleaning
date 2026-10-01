@@ -11,7 +11,7 @@ import { FAQ_HOME } from '@/config/site';
 import { siteConfig } from '@/config/site';
 
 export const metadata: Metadata = {
-  title: `Химчистка диванов на дому — цена от 1500 ₽ | ${siteConfig.name}`,
+  title: `Химчистка диванов на дому — цена от 1 700 ₽ | ${siteConfig.name}`,
   description: siteConfig.description,
   alternates: { canonical: '/' },
 };

@@ -8,41 +8,44 @@ import { OrderForm } from '@/components/forms/OrderForm';
 import {
   FURNITURE_PRICING,
   EXTRA_SERVICES,
+  FABRIC_SERVICE_IDS,
   calcPrice,
   type ExtraServiceId,
-  type FurnitureTypeKey,
+  type SofaTypeKey,
 } from '@/config/pricing';
 import { cn } from '@/lib/utils';
 
-const FURNITURE_ORDER: FurnitureTypeKey[] = [
-  'SOFA',
-  'CORNER_SOFA',
-  'ARMCHAIR',
-  'MATTRESS',
-  'CARPET',
-  'CHAIR',
-  'OTTOMAN',
-];
+const SOFA_ORDER: SofaTypeKey[] = ['SOFA_2', 'SOFA_3', 'CORNER_SOFA', 'CORNER_SOFA_5', 'U_SHAPE_SOFA'];
+
+const NON_FABRIC_EXTRAS = EXTRA_SERVICES.filter((s) => !FABRIC_SERVICE_IDS.includes(s.id));
 
 export function Calculator() {
-  const [furnitureType, setFurnitureType] = useState<FurnitureTypeKey>('SOFA');
-  const [units, setUnits] = useState(FURNITURE_PRICING.SOFA.minUnits);
+  const [furnitureType, setFurnitureType] = useState<SofaTypeKey>('SOFA_2');
+  const [units, setUnits] = useState(FURNITURE_PRICING.SOFA_2.minUnits);
   const [services, setServices] = useState<ExtraServiceId[]>([]);
 
-  const furniture = FURNITURE_PRICING[furnitureType];
+  const sofa = FURNITURE_PRICING[furnitureType];
+  const fabric = services.find((id) => FABRIC_SERVICE_IDS.includes(id));
 
   const price = useMemo(
     () => calcPrice({ furnitureType, units, services }),
     [furnitureType, units, services]
   );
 
-  function selectFurniture(key: FurnitureTypeKey) {
+  function selectFurniture(key: SofaTypeKey) {
     setFurnitureType(key);
     setUnits(FURNITURE_PRICING[key].minUnits);
   }
 
   function toggleService(id: ExtraServiceId) {
     setServices((prev) => (prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]));
+  }
+
+  function selectFabric(id: ExtraServiceId | null) {
+    setServices((prev) => {
+      const rest = prev.filter((s) => !FABRIC_SERVICE_IDS.includes(s));
+      return id ? [...rest, id] : rest;
+    });
   }
 
   return (
@@ -60,18 +63,18 @@ export function Calculator() {
               Узнайте стоимость <span className="text-gradient">за 30 секунд</span>
             </>
           }
-          subtitle="Честная цена без звонка. Выберите мебель и опции — калькулятор покажет итог сразу."
+          subtitle="Честная цена без звонка. Выберите тип дивана и опции — калькулятор покажет итог сразу."
         />
 
         <div className="grid gap-8 lg:grid-cols-5">
           <div className="space-y-8 lg:col-span-3">
-            {/* Шаг 1: тип мебели */}
+            {/* Шаг 1: тип дивана */}
             <div>
               <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
-                1. Что нужно почистить?
+                1. Какой у вас диван?
               </h3>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {FURNITURE_ORDER.map((key) => {
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {SOFA_ORDER.map((key) => {
                   const option = FURNITURE_PRICING[key];
                   const active = furnitureType === key;
                   return (
@@ -88,7 +91,8 @@ export function Calculator() {
                       )}
                     >
                       <span className="block text-sm font-bold text-slate-900">{option.label}</span>
-                      <span className="mt-0.5 block text-xs text-slate-500">
+                      <span className="mt-0.5 block text-xs text-slate-500">{option.sizeHint}</span>
+                      <span className="mt-0.5 block text-xs font-semibold text-violet-700">
                         от {(option.pricePerUnit * option.minUnits).toLocaleString('ru-RU')} ₽
                       </span>
                     </button>
@@ -97,16 +101,16 @@ export function Calculator() {
               </div>
             </div>
 
-            {/* Шаг 2: объём */}
+            {/* Шаг 2: количество */}
             <div>
               <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
-                2. Объём — {furniture.label.toLowerCase()}, {furniture.unit}
+                2. Количество диванов
               </h3>
               <div className="glass inline-flex items-center gap-4 rounded-full p-2 pl-5 shadow-bento">
                 <button
                   type="button"
                   aria-label="Уменьшить"
-                  onClick={() => setUnits((u) => Math.max(furniture.minUnits, u - 1))}
+                  onClick={() => setUnits((u) => Math.max(sofa.minUnits, u - 1))}
                   className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-xl font-bold text-slate-700 transition-colors hover:bg-violet-100"
                 >
                   −
@@ -117,22 +121,67 @@ export function Calculator() {
                 <button
                   type="button"
                   aria-label="Увеличить"
-                  onClick={() => setUnits((u) => Math.min(furniture.maxUnits, u + 1))}
+                  onClick={() => setUnits((u) => Math.min(sofa.maxUnits, u + 1))}
                   className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-gradient text-xl font-bold text-white shadow-glow/30"
                 >
                   +
                 </button>
               </div>
-              <p className="mt-2 text-xs text-slate-500">{furniture.hint}</p>
+              <p className="mt-2 text-xs text-slate-500">От 1 до 5 диванов за один выезд</p>
             </div>
 
-            {/* Шаг 3: опции */}
+            {/* Шаг 3: тип обивки (radio, взаимоисключающие наценки) */}
             <div>
               <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
-                3. Дополнительно (необязательно)
+                3. Тип обивки
+              </h3>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <button
+                  type="button"
+                  aria-pressed={!fabric}
+                  onClick={() => selectFabric(null)}
+                  className={cn(
+                    'rounded-2xl border-2 p-3 text-left transition-all duration-200',
+                    !fabric
+                      ? 'border-violet-500 bg-white shadow-glow/30'
+                      : 'border-slate-200 bg-white/70 hover:border-violet-300'
+                  )}
+                >
+                  <span className="block text-sm font-bold text-slate-900">Стандарт</span>
+                  <span className="mt-0.5 block text-xs text-slate-500">без наценки</span>
+                </button>
+                {EXTRA_SERVICES.filter((s) => FABRIC_SERVICE_IDS.includes(s.id)).map((service) => {
+                  const active = services.includes(service.id);
+                  return (
+                    <button
+                      key={service.id}
+                      type="button"
+                      aria-pressed={active}
+                      onClick={() => selectFabric(service.id)}
+                      className={cn(
+                        'rounded-2xl border-2 p-3 text-left transition-all duration-200',
+                        active
+                          ? 'border-violet-500 bg-white shadow-glow/30'
+                          : 'border-slate-200 bg-white/70 hover:border-violet-300'
+                      )}
+                    >
+                      <span className="block text-sm font-bold text-slate-900">{service.label}</span>
+                      <span className="mt-0.5 block text-xs font-semibold text-violet-700">
+                        +{Math.round((service.value - 1) * 100)}%
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Шаг 4: опции */}
+            <div>
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
+                4. Дополнительно (необязательно)
               </h3>
               <div className="grid gap-3 sm:grid-cols-2">
-                {EXTRA_SERVICES.map((service) => {
+                {NON_FABRIC_EXTRAS.map((service) => {
                   const active = services.includes(service.id);
                   return (
                     <button
@@ -188,8 +237,10 @@ export function Calculator() {
                     className="mt-2 block font-heading text-4xl font-extrabold text-gradient"
                   />
                   <div className="mt-2 text-xs text-slate-500">
-                    {furniture.label} • {units} × {furniture.unit}
-                    {services.length > 0 && ` • ${services.length} доп.`}
+                    {sofa.label} • {units} {sofa.unit}
+                    {fabric && ` • ${EXTRA_SERVICES.find((s) => s.id === fabric)?.label}`}
+                    {services.filter((s) => !FABRIC_SERVICE_IDS.includes(s)).length > 0 &&
+                      ` • ${services.filter((s) => !FABRIC_SERVICE_IDS.includes(s)).length} доп.`}
                   </div>
                   <div className="mt-1 text-xs text-slate-400">
                     Точную цену мастер подтвердит на месте до начала работ

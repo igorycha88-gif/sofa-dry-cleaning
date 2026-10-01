@@ -12,7 +12,7 @@ export function BentoAdvantages() {
             Чистка, которой <span className="text-gradient">доверяют</span>
           </>
         }
-        subtitle="Мы не «моем диван» — мы возвращаем мебели состояние, в котором её купили. И отвечаем за результат."
+        subtitle="Мы не «моем диван» — мы возвращаем ему состояние, в котором его купили. И отвечаем за результат."
       />
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

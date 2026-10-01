@@ -96,6 +96,12 @@ export function Header() {
               >
                 {siteConfig.phone}
               </a>
+              <a
+                href={siteConfig.phone2Href}
+                className="rounded-xl px-4 py-3 text-base font-bold text-violet-700"
+              >
+                {siteConfig.phone2}
+              </a>
             </div>
           </motion.nav>
         )}

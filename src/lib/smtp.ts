@@ -83,7 +83,7 @@ export function renderManagerEmail(order: OrderEmailPayload): string {
 
 export function renderClientEmail(order: OrderEmailPayload): string {
   return `<h2>Спасибо за заявку, ${escapeHtml(order.name)}! 🧼</h2>
-<p>Мы получили вашу заявку на химчистку ${FURNITURE_PRICING[order.furnitureType]?.shortLabel ?? 'мебели'}${
+<p>Мы получили вашу заявку на химчистку ${FURNITURE_PRICING[order.furnitureType]?.shortLabel ?? 'дивана'}${
     order.calculatedPrice ? ` (предварительно ${formatPrice(order.calculatedPrice)})` : ''
   }.</p>
 <p>Менеджер перезвонит в течение 15 минут в рабочее время (${siteConfig.workingHours}), чтобы подтвердить удобное время выезда.</p>

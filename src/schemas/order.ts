@@ -32,7 +32,7 @@ export const orderCreateSchema = z.object({
   email: z.string().trim().email('Некорректный email').max(254).optional().or(z.literal('')),
   address: z.string().trim().max(500).optional().or(z.literal('')),
   furnitureType: z.enum(furnitureTypeKeys),
-  seats: z.coerce.number().int().min(1).max(40).optional(),
+  seats: z.coerce.number().int().min(1).max(5).optional(),
   services: z.array(z.enum(extraServiceIds)).max(10).default([]),
   comment: z.string().trim().max(1000, 'Комментарий слишком длинный').optional().or(z.literal('')),
   calculatedPrice: z.coerce.number().int().min(0).max(10_000_000).optional(),

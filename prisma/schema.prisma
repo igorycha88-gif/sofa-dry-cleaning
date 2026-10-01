@@ -17,14 +17,11 @@ enum OrderStatus {
 }
 
 enum FurnitureType {
-  SOFA
+  SOFA_2
+  SOFA_3
   CORNER_SOFA
-  ARMCHAIR
-  MATTRESS
-  CARPET
-  CHAIR
-  OTTOMAN
-  OTHER
+  CORNER_SOFA_5
+  U_SHAPE_SOFA
 }
 
 model Order {

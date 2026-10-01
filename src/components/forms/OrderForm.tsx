@@ -4,11 +4,11 @@ import { useState, type FormEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/FormField';
-import type { ExtraServiceId, FurnitureTypeKey } from '@/config/pricing';
+import type { ExtraServiceId, SofaTypeKey } from '@/config/pricing';
 
 export interface OrderFormProps {
   source: string;
-  furnitureType?: FurnitureTypeKey;
+  furnitureType?: SofaTypeKey;
   seats?: number;
   services?: ExtraServiceId[];
   calculatedPrice?: number;
@@ -26,7 +26,7 @@ const initialState: FormState = { status: 'idle', fieldErrors: {} };
 
 export function OrderForm({
   source,
-  furnitureType = 'SOFA',
+  furnitureType = 'SOFA_2',
   seats,
   services = [],
   calculatedPrice,
@@ -122,7 +122,7 @@ export function OrderForm({
         )}
         {!compact && (
           <div className="sm:col-span-2">
-            <Textarea label="Комментарий (необязательно)" name="comment" placeholder="Опишите мебель и загрязнения" error={state.fieldErrors.comment} />
+            <Textarea label="Комментарий (необязательно)" name="comment" placeholder="Опишите диван и загрязнения" error={state.fieldErrors.comment} />
           </div>
         )}
       </div>

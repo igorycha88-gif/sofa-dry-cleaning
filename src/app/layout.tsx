@@ -21,7 +21,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} — химчистка диванов на дому | Цена от 1500 ₽`,
+    default: `${siteConfig.name} — химчистка диванов на дому | Цена от 1 700 ₽`,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
@@ -42,9 +42,9 @@ const localBusinessJsonLd = {
   telephone: siteConfig.phone,
   email: siteConfig.email,
   address: { '@type': 'PostalAddress', addressLocality: 'Москва', addressCountry: 'RU' },
-  openingHours: 'Mo-Su 08:00-22:00',
+  openingHours: 'Mo-Su 09:00-21:00',
   url: siteConfig.url,
-  priceRange: '1500-15000 RUB',
+  priceRange: '1700-4300 RUB',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
